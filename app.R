@@ -1,5 +1,3 @@
-# Cargar paquetes
-
 library(sf)
 library(dplyr)
 library(shiny)
@@ -58,11 +56,6 @@ urb_soc <- st_read("data/urbanismo_social_sintesis/urbanismo_social_sintesis.shp
 
 # UI ----------------------------------------------------------------------
 
-# ui <- fluidPage(
-#     titlePanel("Mapa interactivo sobre la disponibilidad de servicios para cuidados en la CDMX"),
-#     leafletOutput("mapa")
-# )
-
 ui <- page_navbar(
     title = "Disponibilidad de infraestructura para cuidados en la CDMX",
     theme = bs_theme(bootswatch = "sandstone", base_font = font_google("Montserrat")),
@@ -70,7 +63,6 @@ ui <- page_navbar(
     fillable = T,
     fillable_mobile = T, 
     nav_panel(title = "Mapa interactivo", leafletOutput("mapa"))
-    
 )
 
 # Server ------------------------------------------------------------------
@@ -81,7 +73,7 @@ server <- function(input, output, session) {
     output$mapa <- renderLeaflet({
         
         pal <- colorFactor(
-            palette = c("#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"),  # Rojo a verde
+            palette = c("#d73027", "#fc8d59", "#fee08b", "#d9ef8b", "#1a9850"),
             levels = c(5, 4, 3, 2, 1)
         )
         
@@ -195,10 +187,9 @@ server <- function(input, output, session) {
                         "Pasos Seguros", "Metro", "Metrobús", "Cablebús", "Tren Ligero", 
                         "Trolebús", "Ecobici")) %>%
             
-            # Ajustar la vista inicial
             setView(lng = -99.1332, lat = 19.4326, zoom = 10)
     })
 }
 
-# Ejecutar la aplicación
 shinyApp(ui, server)
+
