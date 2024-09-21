@@ -5,7 +5,7 @@ account: dhjsanchez
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12771246
-bundleId: 9124716
+bundleId: 9129722
 url: https://dhjsanchez.shinyapps.io/Mapa_Dataton_cuidado/
 version: 1
 asMultiple: FALSE

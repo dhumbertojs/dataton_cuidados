@@ -21,7 +21,8 @@ srv_atn <- read.csv("data/servicios_atencion_mujeres.csv") %>%
                          str_to_title(alcaldia), "."),
         horario = paste0("De ", substr(horario_ini, 1, 5), " a ", substr(horario_fin, 1, 5)),
         horario = ifelse(horario == "De 00:00 a 23:59", "Todo el día", horario)
-    )
+    ) %>% 
+    filter(tipo_sede != "LUNA")
 
 metro <- st_read("data/stcmetro_shp/STC_Metro_lineas_utm14n.shp") %>% 
     st_zm(drop = TRUE, what = "ZM") %>% 
@@ -68,6 +69,33 @@ ui <- page_navbar(
 # Server ------------------------------------------------------------------
 
 server <- function(input, output, session) {
+    
+    observe({
+        showModal(modalDialog(
+            title = "Para empezar",
+            HTML("
+            <p>Este mapa muestra la ubicación de:</p>
+            <ul>
+                <li><strong>Centros de atención a mujeres (LUNAS)</strong></li>
+                <li><strong>Instituciones que te pueden ayudar (abogadas, terapia, hospitales)</strong></li>
+                <li><strong>Líneas de transporte público cercanas</strong></li>
+            </ul>
+            <p>Selecciona el recuadro y se mostrarán los puntos de interés.</p>
+            <p>Los colores que iluminan cada colonia (de rojo a verde) indican:</p>
+            <ul>
+                <li>El número de centros de atención</li>
+                <li>El grado de marginación</li>
+            </ul>
+            <p><em>Siempre es mejor que tu colonia esté en verde, o al menos que no esté en rojo.</em></p>
+        "),
+            easyClose = TRUE,
+            fade = TRUE,
+            footer = tagList(
+                modalButton("Ok")
+            )
+        ))
+    })
+    
     
     # Crear el mapa
     output$mapa <- renderLeaflet({
@@ -181,6 +209,12 @@ server <- function(input, output, session) {
                                   "Trolebús", "Ecobici"),
                 options = layersControlOptions(collapsed = FALSE)
             ) %>%
+            
+            # Agregar leyenda personalizada
+            addLegend(position = "bottomright", 
+                      colors = c("blue", "green", "purple"),
+                      labels = c("LUNAS", "Servicios de Atención", "Pasos Seguros"),
+                      title = "Puntos de Interés") %>%
             
             # Ocultar capas por defecto
             hideGroup(c("Número de centros de atención", "LUNAS", "Servicios de Atención",
